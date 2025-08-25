@@ -33,6 +33,11 @@ export class Clock extends React.Component<PropsClock, StateClock> {
       // eslint-disable-next-line no-console
       console.log(this.state.today.toUTCString().slice(-12, -4));
     }
+
+    if (this.props.name !== prevProps.name) {
+      // eslint-disable-next-line no-console
+      console.warn(`Renamed from ${prevProps.name} to ${this.props.name}`);
+    }
   }
 
   componentWillUnmount(): void {
@@ -83,7 +88,6 @@ export class App extends React.Component<{}, StateApp> {
   private handleClick = (event: MouseEvent) => {
     event.preventDefault();
 
-    this.getRandomName();
     this.setState({ hasClock: true });
 
     if (this.randomNameID === undefined) {
@@ -109,33 +113,19 @@ export class App extends React.Component<{}, StateApp> {
     }
   }
 
-  componentDidUpdate(
-    prevProps: Readonly<StateApp>,
-    prevState: Readonly<StateApp>,
-  ): void {
-    const nameChanged = this.state.clockName !== prevState.clockName;
-
-    if (nameChanged) {
-      // eslint-disable-next-line no-console
-      console.warn(
-        `Renamed from ${prevState.clockName} to ${this.state.clockName}`,
-      );
-    }
-  }
-
   componentWillUnmount(): void {
     document.removeEventListener('contextmenu', this.handleContextMenu);
     document.removeEventListener('click', this.handleClick);
   }
 
   render(): React.ReactNode {
-    const { hasClock } = this.state;
+    const { hasClock, clockName } = this.state;
 
     return (
       <>
         <div className="App">
           <h1>React clock</h1>
-          {hasClock && <Clock name={this.state.clockName} />}
+          {hasClock && <Clock name={clockName} />}
         </div>
       </>
     );
